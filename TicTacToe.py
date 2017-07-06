@@ -59,21 +59,14 @@ def think():
     else:
       answer = "5"
   else:
-    print("anticipating win...move # ", moveCounter)
     answer = anticipateWin()
     if answer == "0":
-      print ("anticipating user win...")
       answer = anticipateUserWin()
     if answer == "0":
-      print("anticipating my advantage...")
       answer = anticipateAdvantage()
-      print("answer is ", answer)
     if answer == "0":
-      print ("anticipating user advantage...")
       answer = anticipateUserAdvantage()
-      print("answer is ", answer)
   if answer == "0":
-    print("this is a random choice:")
     answer = random.choice(moves)
   myMoves.append(answer)
   return answer
@@ -82,50 +75,41 @@ def anticipateWin():
   answer = "0"
   for lis in winnerPos:
     commonEl = set(myMoves) & set(lis)
-    
+
     #for i in myMoves:
      # print("my moves: ", i)
-  
+
     #for i in lis:
-     # print("list item #", i) 
-  
+     # print("list item #", i)
+
     #for i in commonEl:
      # print ("common: ", i)
-    
+
     if len(commonEl) > 1 :
-      print("multiple common win elements")
       for el in lis:
         if el not in commonEl:
-          print("found element not in common elements")
           if el in moves:
-            print("element is available in moves")
             answer = el
-            print("my win was anticipated at ", answer)
             break
             break
-    
+
   return answer
-  
+
 def anticipateUserWin():
   answer = "0"
   for lis in winnerPos:
     commonUser = set(userMoves) & set(lis)
-    
+
     if len(commonUser) > 1 :
-      print("multiple common win elements")
       for el in lis:
         if el not in commonUser:
-          print("found element not in common elements: ", el)
           for i in moves:
-            print("moves: ", i,)
           if el in moves:
-            print("element is in moves")
             answer = el
-            print("user win was anticipated at ",answer )
             break
             break
   return answer
-  
+
 def anticipateUserAdvantage():
   answer = "0"
   if len(userMoves) < 2:
@@ -136,34 +120,22 @@ def anticipateUserAdvantage():
           if el not in commonUser:
             if el in moves:
               answer = el
-              print("user advantage was anticipated at ",answer )
               break
               break
   else:
     for lis in thirdAdvantage:
       commonUser = set(userMoves) & set(lis)
-      
-      for i in myMoves:
-        print("my moves: ", i)
-  
-      for i in lis:
-        print("list item #", i) 
-  
-      for i in commonUser:
-        print ("common: ", i)
-      
-      
+
       if len(commonUser) > 1 :
         for el in lis:
           if el not in commonUser:
             if el in moves:
               answer = el
-              print("user advantage was anticipated at ",answer )
               break
               break
-    
+
   return answer
-  
+
 def anticipateAdvantage():
   answer = "0"
   if len(myMoves) < 2:
@@ -174,29 +146,27 @@ def anticipateAdvantage():
           if el not in commonEl:
             if el in moves:
               answer = el
-              print("my advantage was anticipated at ",answer )
               break
               break
   else:
     for lis in thirdAdvantage:
       commonEl = set(myMoves) & set(lis)
-      
+
       if len(commonEl) > 1 :
         for el in lis:
           if el not in commonEl:
             if el in moves:
               answer = el
-              print("my advantage was anticipated at ",answer )
               break
               break
-    
+
   return answer
-    
+
       #if ((userMoves[-2] in lis) & (userMoves[-1] in lis) & (myMoves[-1] not in lis)):
       #  for el in lis:
       #    if ((el != userMoves[-2]) | (el != userMoves[-1])):
       #      answer = el
-        
+
 
 
 #switch (move)
@@ -236,7 +206,7 @@ catsGame = True
 while (moveCounter < 9):
 
     move = input ("Choose your move: ")
-    
+
     userMoves.append(move)
 
     if (len(moves) >= 0):
