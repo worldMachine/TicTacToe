@@ -1,10 +1,81 @@
-
+import sys
 import random
 
 person = input('Enter your name: ')
 print('Hello', person)
 
+moveCounter = 0
+matchOver = False
+
+userMoves = []
+myMoves = []
+
 field = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+
+winnerPos = [["1", "2", "3"], ["1", "4", "7"],
+             ["1", "5", "9"], ["4", "5", "6"],
+             ["7", "8", "9"], ["2", "5", "8"],
+             ["3", "6", "9"], ["3", "5", "7"]]
+
+firstAdvantage = ["5", "1", "3", "7", "9"]
+
+secondAdvantage = [["5", "1"], ["5", "3"], ["5", "7"],
+                   ["5", "9"], ["1", "3"], ["3", "9"],
+                   ["7", "9"], ["1", "7"]]
+
+thirdAdvantage = [["1", "3", "5"], ["3", "5", "9"], ["7", "5", "9"],
+                  ["1", "5", "7"], ["1", "3", "9"], ["1", "3", "7"],
+                  ["7", "9", "3"], ["2", "4", "1"], ["2", "3", "6"],
+                  ["6", "9", "8"], ["4", "7", "8"]]
+
+moves = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+
+
+def checkWin(pos1, pos2, pos3, player):
+    if ((pos1 == player) and (pos2 == player) and (pos3 == player)):
+        playerWins = True
+        catsGame = False
+    else:
+        playerWins = False
+    return playerWins
+
+
+def checkWinner(player):
+    for i in range(3):
+        win = checkWin(field[i][0], field[i][1], field[i][2], player)
+        if win:
+            if player == 'o':
+                print("I win!")
+            else:
+                print ("You win!")
+            catsGame = False
+            sys.exit(0)
+    for i in range(3):
+        win = checkWin(field[0][i], field[1][i], field[2][i], player)
+        if win:
+            if player == 'o':
+                print("I win!")
+            else:
+                print ("You win!")
+            catsGame = False
+            sys.exit(0)
+    win = checkWin(field[0][0], field[1][1], field[2][2], player)
+    if win:
+        if player == 'o':
+            print("I win!")
+        else:
+            print ("You win!")
+        catsGame = False
+        sys.exit(0)
+
+    win = checkWin(field[0][2], field[1][1], field[2][0], player)
+    if win:
+        if player == 'o':
+            print("I win!")
+        else:
+            print ("You win!")
+        catsGame = False
+        sys.exit(0)
 
 
 def printField():
@@ -41,15 +112,6 @@ def populate(x, side):
     field[nums[0]][nums[1]] = side
 
 
-winnerPos = [["1", "2", "3"], ["1", "4", "7"], ["1", "5", "9"], ["4", "5", "6"], ["7", "8", "9"], ["2", "5", "8"], ["3", "6", "9"], ["3", "5", "7"]]
-
-firstAdvantage = ["5", "1", "3", "7", "9"]
-
-secondAdvantage = [["5", "1"], ["5", "3"], ["5", "7"], ["5", "9"], ["1", "3"], ["3", "9"], ["7", "9"], ["1", "7"]]
-
-thirdAdvantage = [["1", "3", "5"], ["3", "5", "9"], ["7", "5", "9"], ["1", "5", "7"], ["1", "3", "9"], ["1", "3", "7"], ["7", "9", "3"], ["2", "4", "1"], ["2", "3", "6"], ["6", "9", "8"], ["4", "7", "8"]]
-
-
 def think():
     if moveCounter == 0:
         answer = "5"
@@ -72,11 +134,10 @@ def think():
     return answer
 
 
-def anticipateWin():
+def anticipate(posList, whoMoves):
     answer = "0"
-    for lis in winnerPos:
-        commonEl = set(myMoves) & set(lis)
-
+    for lis in posList:
+        commonEl = set(whoMoves) & set(lis)
         if len(commonEl) > 1:
             for el in lis:
                 if el not in commonEl:
@@ -84,87 +145,38 @@ def anticipateWin():
                         answer = el
                         break
                         break
+    return answer
 
+
+def anticipateWin():
+    answer = anticipate(winnerPos, myMoves)
     return answer
 
 
 def anticipateUserWin():
-    answer = "0"
-    for lis in winnerPos:
-        commonUser = set(userMoves) & set(lis)
-
-        if len(commonUser) > 1:
-            for el in lis:
-                if el not in commonUser:
-                    if el in moves:
-                        answer = el
-                        break
-                        break
+    answer = anticipate(winnerPos, userMoves)
     return answer
 
 
 def anticipateUserAdvantage():
-    answer = "0"
     if len(userMoves) < 2:
-        for lis in secondAdvantage:
-            commonUser = set(userMoves) & set(lis)
-            if len(commonUser) > 0:
-                for el in lis:
-                    if el not in commonUser:
-                        if el in moves:
-                            answer = el
-                            break
-                            break
+        answer = anticipate(secondAdvantage, userMoves)
     else:
-        for lis in thirdAdvantage:
-            commonUser = set(userMoves) & set(lis)
-
-            if len(commonUser) > 1:
-                for el in lis:
-                    if el not in commonUser:
-                        if el in moves:
-                            answer = el
-                            break
-                            break
+        answer = anticipate(thirdAdvantage, userMoves)
     return answer
 
 
 def anticipateAdvantage():
     answer = "0"
     if len(myMoves) < 2:
-        for lis in secondAdvantage:
-            commonEl = set(myMoves) & set(lis)
-            if len(commonEl) > 0:
-                for el in lis:
-                    if el not in commonEl:
-                        if el in moves:
-                            answer = el
-                            break
-                            break
+        answer = anticipate(secondAdvantage, myMoves)
     else:
-        for lis in thirdAdvantage:
-            commonEl = set(myMoves) & set(lis)
-
-            if len(commonEl) > 1:
-                for el in lis:
-                    if el not in commonEl:
-                        if el in moves:
-                            answer = el
-                            break
-                            break
-
+        answer = anticipate(thirdAdvantage, myMoves)
     return answer
 
 
 printField()
 
-moveCounter = 0
-matchOver = False
-
-moves = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
-
-userMoves = []
-myMoves = []
 
 moveFirst = input("Who moves first... you or me?: ")
 
@@ -204,38 +216,7 @@ while (moveCounter < 9):
 
     moveCounter += 1
 
-    if ((field[0][0] == 'x') and (field[0][1] == 'x') and (field[0][2] == 'x')):
-        print("you win.")
-        catsGame = False
-        break
-    elif ((field[1][0] == 'x') and (field[1][1] == 'x') and (field[1][2] == 'x')):
-        print("you win.")
-        catsGame = False
-        break
-    elif ((field[2][0] == 'x') and (field[2][1] == 'x') and (field[2][2] == 'x')):
-        print("you win.")
-        catsGame = False
-        break
-    elif ((field[0][0] == 'x') and (field[1][0] == 'x') and (field[2][0] == 'x')):
-        print("you win.")
-        catsGame = False
-        break
-    elif ((field[0][1] == 'x') and (field[1][1] == 'x') and (field[2][1] == 'x')):
-        print("you win.")
-        catsGame = False
-        break
-    elif ((field[0][2] == 'x') and (field[1][2] == 'x') and (field[2][2] == 'x')):
-        print("you win.")
-        catsGame = False
-        break
-    elif ((field[0][0] == 'x') and (field[1][1] == 'x') and (field[2][2] == 'x')):
-        print("you win.")
-        catsGame = False
-        break
-    elif ((field[0][2] == 'x') and (field[1][1] == 'x') and (field[2][0] == 'x')):
-        print("you win.")
-        catsGame = False
-        break
+    checkWinner('x')
 
     print ("My turn: ")
 
@@ -254,45 +235,8 @@ while (moveCounter < 9):
 
     moveCounter += 1
 
-    if ((field[0][0] == 'o') and (field[0][1] == 'o') and (field[0][2] == 'o')):
-        print("I win.")
-        catsGame = False
-        break
-    else:
-        if ((field[1][0] == 'o') and (field[1][1] == 'o') and (field[1][2] == 'o')):
-            print("I win.")
-            catsGame = False
-            break
-        else:
-            if ((field[2][0] == 'o') and (field[2][1] == 'o') and (field[2][2] == 'o')):
-                print("I win.")
-                catsGame = False
-                break
-            else:
-                if ((field[0][0] == 'o') and (field[1][0] == 'o') and (field[2][0] == 'o')):
-                    print("I win.")
-                    catsGame = False
-                    break
-                else:
-                    if ((field[0][1] == 'o') and (field[1][1] == 'o') and (field[2][1] == 'o')):
-                        print("I win.")
-                        catsGame = False
-                        break
-                    else:
-                        if ((field[0][2] == 'o') and (field[1][2] == 'o') and (field[2][2] == 'o')):
-                            print("I win.")
-                            catsGame = False
-                            break
-                        else:
-                            if ((field[0][0] == 'o') and (field[1][1] == 'o') and (field[2][2] == 'o')):
-                                print("I win.")
-                                catsGame = False
-                                break
-                            else:
-                                if ((field[0][2] == 'o') and (field[1][1] == 'o') and (field[2][0] == 'o')):
-                                    print("I win.")
-                                    catsGame = False
-                                    break
+    checkWinner('o')
+
 if catsGame:
     print ("cats game...")
 else:
