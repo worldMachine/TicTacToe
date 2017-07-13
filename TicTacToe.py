@@ -31,6 +31,7 @@ thirdAdvantage = [["1", "3", "5"], ["3", "5", "9"], ["7", "5", "9"],
 moves = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
 
 
+"If player gets three in a row, player wins"
 def checkWin(pos1, pos2, pos3, player):
     if ((pos1 == player) and (pos2 == player) and (pos3 == player)):
         playerWins = True
@@ -40,6 +41,7 @@ def checkWin(pos1, pos2, pos3, player):
     return playerWins
 
 
+"Check all possible win scenarios for a player."
 def checkWinner(player):
     for i in range(3):
         win = checkWin(field[i][0], field[i][1], field[i][2], player)
@@ -78,6 +80,7 @@ def checkWinner(player):
         sys.exit(0)
 
 
+"Print the board."
 def printField():
     counter = 0
 
@@ -93,6 +96,7 @@ def printField():
 counter = 0
 
 
+"Defines coordinates of each numbered position on board."
 def switch(x):
     return {
         '1': [0, 0],
@@ -107,11 +111,13 @@ def switch(x):
     }[x]
 
 
+"Fills a position with players move."
 def populate(x, side):
     nums = switch(x)
     field[nums[0]][nums[1]] = side
 
 
+"Anticipate win or advantage for each player."
 def think():
     if moveCounter == 0:
         answer = "5"
@@ -134,6 +140,7 @@ def think():
     return answer
 
 
+"Checks win and advantage scenario lists to inform next move."
 def anticipate(posList, whoMoves):
     answer = "0"
     for lis in posList:
@@ -148,16 +155,19 @@ def anticipate(posList, whoMoves):
     return answer
 
 
+"Check if next move can win game."
 def anticipateWin():
     answer = anticipate(winnerPos, myMoves)
     return answer
 
 
+"Check if user's next move can win game."
 def anticipateUserWin():
     answer = anticipate(winnerPos, userMoves)
     return answer
 
 
+"Check if user's next move will give user advantage."
 def anticipateUserAdvantage():
     if len(userMoves) < 2:
         answer = anticipate(secondAdvantage, userMoves)
@@ -166,6 +176,7 @@ def anticipateUserAdvantage():
     return answer
 
 
+"Check if next move can give advantage."
 def anticipateAdvantage():
     answer = "0"
     if len(myMoves) < 2:
@@ -178,6 +189,7 @@ def anticipateAdvantage():
 printField()
 
 
+"User input decides who moves first."
 moveFirst = input("Who moves first... you or me?: ")
 
 if (moveFirst == "you"):
@@ -199,12 +211,14 @@ if (moveFirst == "you"):
 
 catsGame = True
 
+"Main loop of game lasts less than 9 moves."
 while (moveCounter < 9):
 
     move = input("Choose your move: ")
 
     userMoves.append(move)
 
+    "Remove move position from list of possible moves."
     if (len(moves) >= 0):
         moves.remove(move)
     else:
